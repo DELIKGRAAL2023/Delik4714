@@ -1,6 +1,6 @@
 from app.domain.reporting import Report, TransactionRecord
 from app.support.types import ReportRow, currency, Repository
-
+# Reporting service implementation
 
 def make_entity(transaction_id, customer_id, merchant_id, amount, status, timestamp):
     return TransactionRecord(
