@@ -4,10 +4,13 @@ from app.support.types import ReportRow, currency, Repository
 
 def make_entity(transaction_id, customer_id, merchant_id, amount, status, timestamp):
     return TransactionRecord(
-        id=transaction_id,
-        status=status,
-        amount=amount,
-    )
+    id=transaction_id,
+    customer_id=customer_id,
+    merchant_id=merchant_id,
+    amount=amount,
+    status=status,
+    timestamp=timestamp,
+)
 
 
 class ReportingService:

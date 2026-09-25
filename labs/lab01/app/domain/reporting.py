@@ -16,15 +16,21 @@ from app.support.errors import DomainError
 @dataclass(frozen=True)
 class TransactionRecord:
     id: str
-    status: str
+    customer_id: str
+    merchant_id: str
     amount: Money
+    status: str
+    timestamp: object
 
-    def __post_init__(self):
+    def post_init(self):
         identifier(self.id)
         choice(self.status, ("APPROVED", "DECLINED"))
 
         if not isinstance(self.amount, Money):
             raise DomainError("INVALID_AMOUNT")
+
+    def describe(self):
+        return f"{self.id}:{self.status}:{self.amount.amount:.2f}:{self.amount.currency}"
 
 
 @dataclass(frozen=True)
