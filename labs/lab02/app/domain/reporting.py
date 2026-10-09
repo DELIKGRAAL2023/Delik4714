@@ -43,8 +43,8 @@ class Report:
             if row.amount.currency != self.currency:
                 raise DomainError("CURRENCY_MISMATCH")
                 
-        rows=tuple(self.rows)
-        if any(not isinstance(row,ReportRow) for row in rows):
+        
+        if any(not isinstance(row,ReportRow) for row in self.rows):
             raise DomainError("INVALID_REPORT")
           # ЛР2: снимок коллекции
 
