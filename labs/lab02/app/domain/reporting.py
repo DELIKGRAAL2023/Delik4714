@@ -14,9 +14,11 @@ class TransactionRecord:
     timestamp: object
 
     def __post_init__(self):
+        
         identifier(self.transaction_id)
         identifier(self.customer_id)
         identifier(self.merchant_id)
+        
         if self.amount.amount <= 0:
             raise DomainError("INVALID_AMOUNT")
 
@@ -34,10 +36,17 @@ class Report:
 
     def __post_init__(self):
         valid_currency(self.currency)
+
+        object.__setattr__(self, "rows", tuple(self.rows))
+
+        for row in self.rows:
+            if row.amount.currency != self.currency:
+                raise DomainError("CURRENCY_MISMATCH")
+                
         rows=tuple(self.rows)
         if any(not isinstance(row,ReportRow) for row in rows):
             raise DomainError("INVALID_REPORT")
-        object.__setattr__(self,"rows",self.rows)  # ЛР2: снимок коллекции
+          # ЛР2: снимок коллекции
 
     @property
     def approved_total(self):
