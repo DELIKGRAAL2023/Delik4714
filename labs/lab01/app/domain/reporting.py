@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from app.support.types import (
     identifier,
     choice,
+    utc_seconds,
     Money,
     ReportRow,
     total_money,
@@ -13,25 +14,32 @@ from app.support.errors import DomainError
 
 # ЛР1: TransactionRecord вместо словаря.
 
+
 @dataclass(frozen=True)
 class TransactionRecord:
-    id: str
+    transaction_id: str
     customer_id: str
     merchant_id: str
     amount: Money
     status: str
     timestamp: object
 
-    def post_init(self):
-        identifier(self.id)
+    def __post_init__(self):
+        identifier(self.transaction_id)
+        identifier(self.customer_id)
+        identifier(self.merchant_id)
         choice(self.status, ("APPROVED", "DECLINED"))
 
         if not isinstance(self.amount, Money):
             raise DomainError("INVALID_AMOUNT")
 
-    def describe(self):
-        return f"{self.id}:{self.status}:{self.amount.amount:.2f}:{self.amount.currency}"
+        utc_seconds(self.timestamp)
 
+    def describe(self):
+        return (
+            f"{self.transaction_id}:{self.status}:"
+            f"{self.amount.amount:.2f}:{self.amount.currency}"
+        )
 
 @dataclass(frozen=True)
 class Report:

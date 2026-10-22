@@ -4,7 +4,7 @@ from app.support.types import ReportRow, currency, Repository
 
 def make_entity(transaction_id, customer_id, merchant_id, amount, status, timestamp):
     return TransactionRecord(
-    id=transaction_id,
+    transaction_id=transaction_id,
     customer_id=customer_id,
     merchant_id=merchant_id,
     amount=amount,
@@ -26,7 +26,7 @@ class ReportingService:
 
         rows = tuple(
             ReportRow(
-                record.id,
+                record.transaction_id,
                 1,
                 record.amount,
                 record.status
@@ -47,8 +47,14 @@ def _new_legacy_service(repository):
 
 
 def view(record):
-    return record
-
+    return {
+        "transaction_id": record.transaction_id,
+        "customer_id": record.customer_id,
+        "merchant_id": record.merchant_id,
+        "amount": record.amount,
+        "status": record.status,
+        "timestamp": record.timestamp,
+    }
 
 def invoke(service, method, *args):
     if method == "record":
@@ -64,7 +70,7 @@ def new_service(repository=None):
     return _new_legacy_service(
         repository if repository is not None
         else Repository(
-            "id",
+            "transaction_id",
             "DUPLICATE_TRANSACTION"
         )
     )
