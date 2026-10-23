@@ -10,12 +10,16 @@ class ReportBuilder(ABC):
 
 
 class TransactionHistoryReportBuilder(ReportBuilder):
+    
+    def __init__(self, title="История операций"):
+        self.title = title
+     
     def build(self, records, currency):
         rows = tuple(
             record_row(record)
             for record in select_records(records, currency)
         )
-        return Report("История операций", currency, rows)
+        return Report(self.title, currency, rows)
 
 
 class DeclinedTransactionsReportBuilder(ReportBuilder):
