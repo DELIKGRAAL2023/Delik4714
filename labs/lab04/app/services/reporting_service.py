@@ -1,6 +1,6 @@
-from app.domain.reporting import TransactionRecord,Report
+from app.domain.reporting import TransactionRecord
 from app.domain.builders import TransactionHistoryReportBuilder,DeclinedTransactionsReportBuilder
-from app.support.types import validate_report,currency,select_records,record_row,total_money
+from app.support.types import validate_report,currency
 
 
 class ReportingService:
@@ -13,16 +13,11 @@ class ReportingService:
 
     def build(self,code):
         currency(code)
-        if isinstance(self._builder,DeclinedTransactionsReportBuilder):
-            rows=tuple(record_row(record) for record in select_records(self._repository.all(),code,"DECLINED"))
-            result=Report("Отклонённые операции",code,rows)
-        else:
-            result=self._builder.build(self._repository.all(),code)
-        self._last_total=total_money((row.amount for row in result.rows if row.status!="DECLINED"),code)
+        result=self._builder.build(self._repository.all(),code)
         return validate_report(result,code)
 
-    def currency_diagnostic(self,report):
-        return report.rows[0].amount.currency if report.rows else report.currency
+    def currency_diagnostic(self, report):
+        return report.currency
 
 def make_entity(*args, **kwargs):
     return TransactionRecord(*args, **kwargs)
